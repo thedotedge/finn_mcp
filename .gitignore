@@ -110,3 +110,8 @@ ehthumbs.db
 Thumbs.db
 
 local_files/
+
+# Local review artifacts / upstream snapshots
+uploads/
+finn_mcp-*/
+finn_mcp_upstream/

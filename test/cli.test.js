@@ -54,6 +54,7 @@ test("CLI flags and JSON produce identical results through the marketplace handl
   assert.equal(flags.stdout, json.stdout);
   assert.equal(flags.stderr, "");
   const result = JSON.parse(flags.stdout);
+  assert.match(result.security_notice, /untrusted/i);
   assert.equal(result.total_results, 3917);
   assert.equal(result.page, 1);
   assert.equal(result.total_pages, 50);
@@ -69,6 +70,11 @@ test("CLI rejects invalid inputs without printing results", () => {
   for (const args of [
     ["missing"],
     ["get_finn_torget_item"],
+    ["get_finn_torget_item", "--finn_code", "../etc/passwd"],
+    ["get_finn_torget_item", "--finn_code", "abc"],
+    ["get_klarna_product", "--url", "https://example.com/"],
+    ["get_klarna_product", "--url", "http://www.klarna.com/no/shopping/x"],
+    ["get_klarna_product", "--url", "https://127.0.0.1/"],
     ["search_finn_torget", "--sort", "invalid"],
     ["search_finn_torget", "--price_to", "oops"],
     ["search_finn_torget", "--unknown", "value"],

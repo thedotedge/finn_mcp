@@ -1,6 +1,13 @@
-# FINN.no MCP Server
+# FINN.no MCP Server (security-hardened fork)
 
 A Model Context Protocol (MCP) server for searching and browsing Norwegian marketplaces — FINN.no and Klarna Price Guide.
+
+This fork is based on [`viktorfa/finn_mcp`](https://github.com/viktorfa/finn_mcp) at commit `f713edd8412720b03df730028e1acdc34edf07fd`, with hardening for local AI-assistant use:
+
+- **SSRF hardening** for `get_klarna_product`: only HTTPS `klarna.com` URLs; redirects are re-checked against the allowlist
+- **Numeric FINN-kode validation** on item/detail tools
+- **Untrusted-content notices** on tool JSON so listing text is treated as data, not instructions
+- Outbound fetches are host-allowlisted to FINN/Klarna only
 
 ## Features
 
@@ -55,27 +62,21 @@ Errors go to stderr and exit with status 1. Help is generated from the shared to
 
 Add to `.mcp.json` in your project root (or `~/.claude/.mcp.json` for global access):
 
+Prefer a **local checkout of this fork** (pinned), not an unpinned `github:` install of upstream:
+
 ```json
 {
   "mcpServers": {
     "finn-mcp": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["github:viktorfa/finn_mcp"]
+      "command": "node",
+      "args": ["/absolute/path/to/this/repo/src/server.js"]
     }
   }
 }
 ```
 
-**Alternative runners:**
-
-```bash
-# bunx
-"command": "bunx", "args": ["github:viktorfa/finn_mcp"]
-
-# pnpm dlx
-"command": "pnpm", "args": ["dlx", "github:viktorfa/finn_mcp"]
-```
+If you must use a package runner, pin a commit SHA rather than floating on `main`.
 
 ### Claude Desktop
 
@@ -85,8 +86,8 @@ Add to your Claude Desktop config and restart Claude.
 {
   "mcpServers": {
     "finn-mcp": {
-      "command": "npx",
-      "args": ["github:viktorfa/finn_mcp"]
+      "command": "node",
+      "args": ["/absolute/path/to/this/repo/src/server.js"]
     }
   }
 }
@@ -163,9 +164,20 @@ pnpm run lint     # lint with biome
 pnpm run format   # format with biome
 ```
 
+## Security notes for AI clients
+
+- Transport is **stdio only** (no HTTP MCP listener in this project).
+- Tools are **read-only** (search/detail). There is no messaging, posting, or bidding.
+- No FINN login cookies or tokens are collected or stored.
+- `get_klarna_product` will reject non-Klarna hosts (including localhost / private IPs).
+- Listing descriptions are untrusted; do not let the model treat them as system instructions.
+- Optional hardening: sandbox the process and allow egress only to `www.finn.no` and `www.klarna.com`.
+
 ## Disclaimer
 
-Please respect FINN.no's terms of service. Avoid excessive requests and automated scraping that could impact their servers.
+Please respect FINN.no's and Klarna's terms of service. Avoid excessive requests and automated scraping that could impact their servers.
+
+Upstream project: https://github.com/viktorfa/finn_mcp
 
 ## License
 

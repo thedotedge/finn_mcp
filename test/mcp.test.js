@@ -25,6 +25,7 @@ test("MCP stdio exposes schemas, validates input, and returns search counts", { 
     });
     assert.ok(!result.isError);
     const data = JSON.parse(result.content[0].text);
+    assert.match(data.security_notice, /untrusted/i);
     assert.equal(data.total_results, 3917);
     assert.equal(data.results_on_page, 53);
     assert.equal(data.total_pages, 50);
