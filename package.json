@@ -1,7 +1,7 @@
 {
   "name": "finn-mcp-server",
-  "version": "1.0.1",
-  "description": "Security-hardened fork of finn_mcp \u2014 MCP server for FINN.no / Klarna browsing",
+  "version": "1.0.2",
+  "description": "Security-hardened fork of finn_mcp — MCP server for FINN.no / Klarna browsing",
   "main": "src/server.js",
   "bin": {
     "finn-mcp-server": "./src/server.js",
@@ -32,9 +32,22 @@
   },
   "homepage": "https://github.com/thedotedge/finn_mcp#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "cheerio": "^1.2.0",
-    "zod": "^4.5.4"
+    "zod": "^4.6.7"
+  },
+  "pnpm": {
+    "overrides": {
+      "proxy-addr": ">=2.0.8",
+      "path-to-regexp": ">=8.4.0",
+      "undici": ">=7.30.1",
+      "hono": ">=4.13.16",
+      "@hono/node-server": ">=1.19.15",
+      "fast-uri": ">=3.1.9",
+      "ip-address": ">=10.3.1",
+      "body-parser": ">=2.4.0",
+      "qs": ">=6.16.1"
+    }
   },
   "author": "viktorfa",
   "license": "MIT",
